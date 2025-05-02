@@ -1,0 +1,280 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #2c3e50;
+    background-color: #f5f7fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    margin-bottom: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Tabs */
+.tabs {
+    margin-bottom: 20px;
+}
+
+.tab-list {
+    display: flex;
+    list-style: none;
+    border-bottom: 1px solid #bdc3c7;
+}
+
+.tab-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    background-color: #ecf0f1;
+    color: #7f8c8d;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    margin-right: 2px;
+    transition: background-color 0.3s;
+}
+
+.tab-item:hover {
+    background-color: #d6e9f8;
+}
+
+.tab-item.active {
+    background-color: #3498db;
+    color: white;
+}
+
+.tab-pane {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* Cards */
+.card {
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #bdc3c7;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    margin-bottom: 15px;
+    color: #34495e;
+    font-size: 20px;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #34495e;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+select[size] {
+    height: auto;
+    min-height: 150px;
+}
+
+.file-input-container {
+    display: flex;
+}
+
+.file-input-container input[type="text"] {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.btn-success {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #27ae60;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.btn-secondary {
+    background-color: #9b59b6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #8e44ad;
+}
+
+.btn.large {
+    padding: 12px 20px;
+    font-size: 18px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+/* Status */
+.status {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #ecf0f1;
+    color: #3498db;
+    font-weight: bold;
+    min-height: 40px;
+}
+
+footer {
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+}
+
+.status-bar {
+    padding: 5px 10px;
+    background-color: #ecf0f1;
+    border-radius: 4px;
+}
+
+/* Modal dialog */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 6px;
+    width: 60%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    float: right;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+pre {
+    white-space: pre-wrap;
+    background-color: #f5f7fa;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-family: monospace;
+}
+
+/* Installation instructions */
+.install-instructions {
+    margin: 15px 0;
+    line-height: 1.5;
+}
+
+.install-instructions h3 {
+    margin: 15px 0 10px;
+    color: #2c3e50;
+}
+
+.install-instructions h4 {
+    margin: 12px 0 8px;
+    color: #3498db;
+}
+
+.install-instructions ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.install-instructions li {
+    margin-bottom: 8px;
+}
+
+.install-instructions pre {
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+.install-instructions a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.install-instructions a:hover {
+    text-decoration: underline;
+}

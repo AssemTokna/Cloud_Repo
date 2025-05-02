@@ -1,0 +1,42 @@
+# VM disks
+disks/
+*.qcow2
+*.raw
+
+# ISO files
+iso/
+*.iso
+
+# VM configuration files
+vm_configs/
+vms.json
+
+# Python desktop application
+cloud_manager.py
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Web application dependencies
+web/backend/node_modules/
+web/node_modules/
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Environment variables
+.env
+.env.local
+
+# OS specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
