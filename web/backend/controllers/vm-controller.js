@@ -651,6 +651,8 @@ function getVMNameFromPID(pid) {
     
     return null;
 }
+// Export the helper function for testing
+exports.getVMNameFromPID = getVMNameFromPID;
 
 // Helper function to get current timestamp
 function getCurrentTimestamp() {

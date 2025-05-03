@@ -134,23 +134,25 @@ describe("Mock API Tests", () => {
         body: {
           type: "qcow2",
           size: 10,
-          name: "uniquedisk" + Date.now()
-        }
+          name: "uniquedisk" + Date.now(),
+        },
       };
 
       const mockRes = {
         json: jest.fn(),
-        status: jest.fn().mockReturnThis()
+        status: jest.fn().mockReturnThis(),
       };
 
       // Mock fs.existsSync to return false (disk doesn't exist yet)
       fs.existsSync.mockImplementationOnce(() => false);
 
       diskController.createDisk(mockReq, mockRes, appDirs);
-      expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({
-        success: true,
-        diskName: expect.any(String)
-      }));
+      expect(mockRes.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          diskName: expect.any(String),
+        })
+      );
     });
   });
 
