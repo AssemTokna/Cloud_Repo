@@ -577,9 +577,9 @@ describe("VM Controller", () => {
 
         const mockRes = {
           json: jest.fn(),
-          status: jest.fn().mockReturnThis() 
+          status: jest.fn().mockReturnThis(),
         };
-        
+
         // Make sure fs.writeFileSync doesn't throw an error in this test
         fs.writeFileSync.mockImplementation(() => undefined);
 
@@ -1034,7 +1034,7 @@ describe("VM Controller", () => {
       it("should get VM name from running VMs object", () => {
         // Using the exported function
         const vmName = vmController.getVMNameFromPID(1234);
-        
+
         expect(vmName).toBe("testvm");
       });
 
