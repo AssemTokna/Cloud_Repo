@@ -402,14 +402,14 @@ const dockerController = {
       });
     } catch (error) {
       console.error("Error deleting Docker image:", error);
-      
+
       // Extract error message from Docker CLI
       let errorMessage = "Failed to delete Docker image";
       if (error.stderr) {
         const stderrStr = error.stderr.toString();
-        errorMessage = stderrStr.split('\n')[0] || errorMessage;
+        errorMessage = stderrStr.split("\n")[0] || errorMessage;
       }
-      
+
       res.status(500).json({
         success: false,
         message: errorMessage,
