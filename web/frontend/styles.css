@@ -253,39 +253,30 @@ pre {
   line-height: 1.5;
 }
 
-.install-instructions h3 {
-  margin: 15px 0 10px;
-  color: #2c3e50;
-}
-
-.install-instructions h4 {
-  margin: 12px 0 8px;
-  color: #3498db;
-}
-
-.install-instructions ol {
-  margin-left: 20px;
-  margin-bottom: 15px;
-}
-
-.install-instructions li {
-  margin-bottom: 8px;
-}
-
-.install-instructions pre {
-  background-color: #f1f1f1;
-  padding: 10px;
+/* System resource information */
+.resource-info {
+  margin: 15px 0;
+  padding: 10px 15px;
+  background-color: #f8f9fa;
   border-radius: 4px;
-  overflow-x: auto;
+  border-left: 4px solid #007bff;
+  font-size: 14px;
 }
 
-.install-instructions a {
-  color: #3498db;
-  text-decoration: none;
+.resource-info p {
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #495057;
 }
 
-.install-instructions a:hover {
-  text-decoration: underline;
+.resource-info ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #666;
+}
+
+.resource-info li {
+  margin-bottom: 5px;
 }
 
 /* Docker tab specific styles */

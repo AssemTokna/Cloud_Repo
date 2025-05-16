@@ -29,7 +29,21 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-const upload = multer({ storage: storage });
+
+// File filter for ISO files
+const fileFilter = (req, file, cb) => {
+  // Accept only files with .iso extension
+  if (file.originalname.toLowerCase().endsWith(".iso")) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only ISO files are allowed"), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+});
 
 // Application folders
 const appDirs = {
@@ -83,18 +97,51 @@ app.delete("/api/vms/config/:name", (req, res) =>
 );
 
 // ISO upload
-app.post("/api/upload-iso", upload.single("isoFile"), (req, res) => {
-  if (req.file) {
+app.post("/api/upload-iso", (req, res) => {
+  upload.single("isoFile")(req, res, function (err) {
+    // Handle multer errors
+    if (err) {
+      if (err.message === "Only ISO files are allowed") {
+        return res.status(400).json({
+          success: false,
+          message: "Only ISO files (.iso extension) are allowed",
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: `File upload error: ${err.message}`,
+      });
+    }
+
+    // Check if a file was uploaded
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No file uploaded",
+      });
+    }
+
+    // Double-check file extension for security
+    if (!req.file.originalname.toLowerCase().endsWith(".iso")) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (error) {
+        console.error("Error deleting invalid file:", error);
+      }
+
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid file format. Please upload an ISO file (.iso extension)",
+      });
+    }
+
     res.json({
       success: true,
       path: req.file.path,
     });
-  } else {
-    res.status(400).json({
-      success: false,
-      message: "No file uploaded",
-    });
-  }
+  });
 });
 
 // Docker management
@@ -129,6 +176,52 @@ app.post("/api/docker/images/pull", (req, res) =>
 app.post("/api/docker/images/delete", (req, res) =>
   dockerController.deleteImage(req, res)
 );
+
+// System specifications
+app.get("/api/system/resources", (req, res) => {
+  const systemUtils = require("./utils/system-utils");
+  try {
+    // Get available CPU cores
+    const availableCores = systemUtils.getAvailableCPUCores();
+    // Get available memory
+    const availableMemoryMB = systemUtils.getAvailableMemoryMB();
+    // Get available disk space for the disks directory
+    const availableDiskSpaceGB = systemUtils.getAvailableDiskSpaceGB(
+      appDirs.disks
+    );
+
+    // Calculate recommended maximums (keeping some resources for the host)
+    const maxCores = Math.max(1, availableCores - 1);
+    const reserveMemoryMB = 2 * 1024; // Reserve 2GB
+    const maxMemoryMB = Math.max(512, availableMemoryMB - reserveMemoryMB);
+    const bufferDiskGB = Math.max(5, Math.floor(availableDiskSpaceGB * 0.1));
+    const maxDiskGB = Math.max(1, availableDiskSpaceGB - bufferDiskGB);
+
+    res.json({
+      success: true,
+      resources: {
+        cpu: {
+          total: availableCores,
+          recommended: maxCores,
+        },
+        memory: {
+          totalMB: availableMemoryMB,
+          recommendedMB: maxMemoryMB,
+        },
+        disk: {
+          availableGB: availableDiskSpaceGB,
+          recommendedMaxGB: maxDiskGB,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error getting system resources:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve system resource information",
+    });
+  }
+});
 
 // Serve the main HTML file
 app.get("/", (req, res) => {

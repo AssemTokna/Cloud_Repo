@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { exec, execSync } = require("child_process");
 const { platform } = require("os");
+const systemUtils = require("../utils/system-utils");
 
 // Track running VMs - make it accessible to the watcher in server.js
 const runningVMs = {};
@@ -169,6 +170,28 @@ exports.createVM = (req, res, appDirs) => {
       });
     }
 
+    // Validate CPU cores against system resources
+    const cpuCores = parseInt(cpu);
+    const cpuValidation = systemUtils.validateCPUCores(cpuCores);
+    if (!cpuValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: cpuValidation.message,
+        availableCores: cpuValidation.availableCores,
+      });
+    }
+
+    // Validate memory against system resources
+    const memoryMB = parseInt(memory);
+    const memoryValidation = systemUtils.validateMemory(memoryMB);
+    if (!memoryValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: memoryValidation.message,
+        availableMemoryMB: memoryValidation.availableMemoryMB,
+      });
+    }
+
     const diskPath = path.join(appDirs.disks, disk);
 
     if (!fs.existsSync(diskPath)) {
@@ -176,6 +199,17 @@ exports.createVM = (req, res, appDirs) => {
         success: false,
         message: `Disk '${disk}' not found.`,
       });
+    }
+
+    // Validate ISO file if specified
+    if (iso) {
+      const isoValidation = systemUtils.validateISOFile(iso);
+      if (!isoValidation.isValid) {
+        return res.status(400).json({
+          success: false,
+          message: isoValidation.message,
+        });
+      }
     }
 
     // Build QEMU command
