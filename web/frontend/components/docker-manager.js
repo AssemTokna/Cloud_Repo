@@ -180,28 +180,36 @@ function initializeDockerManager() {
           if (data.images && data.images.length > 0) {
             data.images.forEach((image) => {
               const tr = document.createElement("tr");
+              const imageName = image.repository && image.tag
+                ? `${image.repository}:${image.tag}`
+                : (image.repository || image.id);
+              
               tr.innerHTML = `
-                                <td>${image.repository || "<none>"}</td>
-                                <td>${image.tag || "<none>"}</td>
-                                <td>${image.id}</td>
-                                <td>${image.size}</td>
-                                <td>${image.created}</td>
-                            `;
+                <td>${image.repository || "<none>"}</td>
+                <td>${image.tag || "<none>"}</td>
+                <td>${image.id}</td>
+                <td>${image.size}</td>
+                <td>${image.created}</td>
+                <td>
+                  <button class="btn btn-danger btn-sm delete-image" data-id="${image.id}" data-name="${imageName}">Delete</button>
+                </td>
+              `;
               dockerImagesTable.appendChild(tr);
 
               // Add to container image dropdown
               const option = document.createElement("option");
-              const imageName =
-                image.repository && image.tag
-                  ? `${image.repository}:${image.tag}`
-                  : image.repository || image.id;
               option.value = imageName;
               option.textContent = imageName;
               containerImage.appendChild(option);
             });
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll(".delete-image").forEach((button) => {
+              button.addEventListener("click", deleteImage);
+            });
           } else {
             const tr = document.createElement("tr");
-            tr.innerHTML = '<td colspan="5">No Docker images found</td>';
+            tr.innerHTML = '<td colspan="6">No Docker images found</td>';
             dockerImagesTable.appendChild(tr);
           }
         } else {
@@ -575,6 +583,53 @@ function initializeDockerManager() {
           pullImageBtn.disabled = false;
         });
     });
+  }
+
+  // 9. Delete Docker Image
+  function deleteImage(e) {
+    const imageId = e.target.getAttribute("data-id");
+    const imageName = e.target.getAttribute("data-name");
+    
+    if (!imageId) return;
+    
+    if (!confirm(`Are you sure you want to delete image ${imageName || imageId}?`)) {
+      return;
+    }
+
+    // Disable the button
+    e.target.disabled = true;
+    e.target.textContent = "Deleting...";
+    
+    fetch("/api/docker/images/delete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        imageId: imageId,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          document.getElementById("global-status").textContent = data.message;
+          // Refresh images list
+          loadDockerImages();
+        } else {
+          document.getElementById("global-status").textContent = `Error: ${data.message}`;
+          console.error(data.error);
+          // Reset the button
+          e.target.disabled = false;
+          e.target.textContent = "Delete";
+        }
+      })
+      .catch((error) => {
+        document.getElementById("global-status").textContent = `Error: ${error.message}`;
+        console.error("Error deleting image:", error);
+        // Reset the button
+        e.target.disabled = false;
+        e.target.textContent = "Delete";
+      });
   }
 
   // Initialize lists when the component is loaded

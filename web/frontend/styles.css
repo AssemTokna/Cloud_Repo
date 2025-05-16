@@ -8,7 +8,7 @@ body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   color: #2c3e50;
-  background-color: #f5f7fa;
+  background-color: #f8f9fa; /* Lighter background */
 }
 
 .container {
@@ -48,12 +48,13 @@ header {
 }
 
 .tab-item:hover {
-  background-color: #d6e9f8;
+  background-color: #e9ecef; /* Lighter hover for non-active tabs */
 }
 
 .tab-item.active {
-  background-color: #3498db;
+  background-color: #007bff; /* Updated primary blue */
   color: white;
+  border-bottom: 1px solid #007bff; /* Ensure border matches active tab color */
 }
 
 .tab-pane {
@@ -128,40 +129,48 @@ select[size] {
   transition: background-color 0.3s;
 }
 
+.btn:hover {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Add shadow on hover */
+}
+
 .btn-primary {
-  background-color: #3498db;
+  background-color: #007bff; /* Updated primary blue */
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #2980b9;
+  background-color: #0069d9; /* Darker shade for hover */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .btn-success {
-  background-color: #2ecc71;
+  background-color: #28a745; /* Standard success green */
   color: white;
 }
 
 .btn-success:hover {
-  background-color: #27ae60;
+  background-color: #218838;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .btn-danger {
-  background-color: #e74c3c;
+  background-color: #dc3545; /* Standard danger red */
   color: white;
 }
 
 .btn-danger:hover {
-  background-color: #c0392b;
+  background-color: #c82333;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .btn-secondary {
-  background-color: #9b59b6;
+  background-color: #6c757d; /* Standard secondary gray */
   color: white;
 }
 
 .btn-secondary:hover {
-  background-color: #8e44ad;
+  background-color: #5a6268;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .btn.large {
@@ -302,16 +311,20 @@ pre {
 }
 
 .data-table th {
-  background-color: #f5f7fa;
+  background-color: #e9ecef; /* Lighter, distinct header */
   font-weight: bold;
-  color: #34495e;
+  color: #495057; /* Darker text for header */
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
+.data-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa; /* Striped row color */
+}
+
 .data-table tr:hover {
-  background-color: #f1f9ff;
+  background-color: #e2e6ea; /* Hover for table rows */
 }
 
 .btn-sm {

@@ -376,10 +376,51 @@ const dockerController = {
         error: error.toString(),
       });
     }
-  }
+  },
+
+  /**
+   * Delete a Docker image
+   */
+  deleteImage: (req, res) => {
+    try {
+      const { imageId } = req.body;
+
+      if (!imageId) {
+        return res.status(400).json({
+          success: false,
+          message: "Image ID is required",
+        });
+      }
+
+      // Execute docker rmi command
+      const output = execSync(`docker rmi ${imageId} --force`).toString();
+
+      res.json({
+        success: true,
+        message: `Docker image deleted successfully`,
+        output,
+      });
+    } catch (error) {
+      console.error("Error deleting Docker image:", error);
+      
+      // Extract error message from Docker CLI
+      let errorMessage = "Failed to delete Docker image";
+      if (error.stderr) {
+        const stderrStr = error.stderr.toString();
+        errorMessage = stderrStr.split('\n')[0] || errorMessage;
+      }
+      
+      res.status(500).json({
+        success: false,
+        message: errorMessage,
+        error: error.toString(),
+      });
+    }
+  },
+
   /**
    * Search for Docker images on DockerHub
-   */,
+   */
   searchDockerHub: (req, res) => {
     // Try using execSync to simplify error handling
     const { searchTerm } = req.body;

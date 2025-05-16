@@ -126,6 +126,9 @@ app.post("/api/docker/dockerhub/search", (req, res) => {
 app.post("/api/docker/images/pull", (req, res) =>
   dockerController.pullImage(req, res)
 );
+app.post("/api/docker/images/delete", (req, res) =>
+  dockerController.deleteImage(req, res)
+);
 
 // Serve the main HTML file
 app.get("/", (req, res) => {
