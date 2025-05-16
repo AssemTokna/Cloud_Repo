@@ -1,327 +1,518 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cloud Management System - Web</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>Cloud Management System</h1>
-        </header>
-          <div class="tabs">
-            <ul class="tab-list">
-                <li class="tab-item active" data-tab="disk-tab">💾 Virtual Disks</li>
-                <li class="tab-item" data-tab="vm-tab">🖥️ Create VM</li>
-                <li class="tab-item" data-tab="manage-tab">⚙️ Manage VMs</li>
-                <li class="tab-item" data-tab="docker-tab">🐳 Docker</li>
-            </ul>
-            
-            <div class="tab-content">
-                <!-- Disk Tab -->
-                <div id="disk-tab" class="tab-pane active">
-                    <div class="card">
-                        <h2>Create New Virtual Disk</h2>
-                        <form id="disk-form">
-                            <div class="form-group">
-                                <label for="disk-type">Disk Type:</label>
-                                <select id="disk-type" required>
-                                    <option value="qcow2">qcow2</option>
-                                    <option value="raw">raw</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="disk-size">Disk Size (GB):</label>
-                                <input type="number" id="disk-size" min="1" max="1024" value="10" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="disk-name">Disk Name:</label>
-                                <input type="text" id="disk-name" placeholder="Enter disk name" required>
-                            </div>
-                            <button type="submit" id="create-disk-btn" class="btn btn-success">Create Disk</button>
-                        </form>
-                    </div>
-                    
-                    <div class="card">
-                        <h2>Manage Existing Disks</h2>
-                        <div class="form-group">
-                            <select id="disk-list" size="5"></select>
-                        </div>
-                        <button id="delete-disk-btn" class="btn btn-danger">Delete Selected Disk</button>
-                        <div id="disk-status" class="status"></div>
-                    </div>
+      <header>
+        <h1>Cloud Management System</h1>
+      </header>
+      <div class="tabs">
+        <ul class="tab-list">
+          <li class="tab-item active" data-tab="disk-tab">💾 Virtual Disks</li>
+          <li class="tab-item" data-tab="vm-tab">🖥️ Create VM</li>
+          <li class="tab-item" data-tab="manage-tab">⚙️ Manage VMs</li>
+          <li class="tab-item" data-tab="docker-tab">🐳 Docker</li>
+        </ul>
+
+        <div class="tab-content">
+          <!-- Disk Tab -->
+          <div id="disk-tab" class="tab-pane active">
+            <div class="card">
+              <h2>Create New Virtual Disk</h2>
+              <form id="disk-form">
+                <div class="form-group">
+                  <label for="disk-type">Disk Type:</label>
+                  <select id="disk-type" required>
+                    <option value="qcow2">qcow2</option>
+                    <option value="raw">raw</option>
+                  </select>
                 </div>
-                
-                <!-- VM Creation Tab -->
-                <div id="vm-tab" class="tab-pane">
-                    <div class="card">
-                        <h2>VM Configuration</h2>
-                        <form id="vm-form">
-                            <div class="form-group">
-                                <label for="vm-name">VM Name:</label>
-                                <input type="text" id="vm-name" placeholder="Enter VM name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="cpu-cores">CPU Cores:</label>
-                                <input type="number" id="cpu-cores" min="1" max="16" value="2">
-                            </div>
-                            <div class="form-group">
-                                <label for="memory">Memory (MB):</label>
-                                <input type="number" id="memory" min="128" max="32768" value="1024" step="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="disk-select">Select Disk:</label>
-                                <select id="disk-select" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="iso-path">Boot ISO (optional):</label>
-                                <div class="file-input-container">
-                                    <input type="text" id="iso-path" placeholder="Select ISO file">
-                                    <input type="file" id="iso-file" accept=".iso" style="display: none;">
-                                    <button type="button" id="browse-iso-btn" class="btn btn-primary">Browse</button>
-                                </div>
-                            </div>
-                            
-                            <div class="button-group">
-                                <button type="button" id="save-vm-btn" class="btn btn-primary">Save VM Config</button>
-                                <button type="button" id="load-vm-btn" class="btn btn-secondary">Load VM Config</button>
-                            </div>
-                            
-                            <button type="submit" id="create-vm-btn" class="btn btn-success large">Create and Start VM</button>
-                        </form>
-                        <div id="vm-status" class="status"></div>
-                    </div>                </div>
-                
-                <!-- VM Management Tab -->
-                <div id="manage-tab" class="tab-pane">
-                    <div class="card">
-                        <h2>Running Virtual Machines</h2>
-                        <div class="form-group">
-                            <select id="vm-list" size="5"></select>
-                        </div>
-                        <button id="refresh-vm-btn" class="btn btn-primary">Refresh VM List</button>
-                        <div class="button-group">
-                            <button id="stop-vm-btn" class="btn btn-danger">Stop VM</button>
-                            <button id="view-details-btn" class="btn btn-primary">View Details</button>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <h2>Saved VM Configurations</h2>
-                        <div class="form-group">
-                            <select id="saved-vm-list" size="5"></select>
-                        </div>
-                        <div class="button-group">
-                            <button id="start-saved-vm-btn" class="btn btn-success">Start Selected VM</button>
-                            <button id="edit-config-btn" class="btn btn-primary">Edit Config</button>
-                            <button id="delete-config-btn" class="btn btn-danger">Delete Config</button>
-                        </div>
-                        <div id="manage-status" class="status"></div>
-                    </div>
-                </div>                <!-- Docker Tab -->
-                <div id="docker-tab" class="tab-pane">
-                    <div class="card">
-                        <h2>Create Dockerfile</h2>
-                        <form id="create-dockerfile-form">
-                            <div class="form-group">
-                                <label for="dockerfile-save-path">Dockerfile Path:</label>
-                                <input type="text" id="dockerfile-save-path" placeholder="Enter path to save Dockerfile (e.g., D:/Projects/MyDocker/Dockerfile)" required />
-                            </div>
-                            <div class="form-group">
-                                <label for="dockerfile-content">Dockerfile Content:</label>
-                                <textarea id="dockerfile-content" placeholder="FROM nginx:latest&#10;COPY ./html /usr/share/nginx/html&#10;EXPOSE 80" rows="10" required></textarea>
-                            </div>
-                            <button type="submit" id="create-dockerfile-btn" class="btn btn-success">Create Dockerfile</button>
-                        </form>
-                        <div id="create-dockerfile-status" class="status"></div>
-                    </div>
-
-                    <div class="card">
-                        <h2>Build Docker Image</h2>
-                        <form id="docker-build-form">
-                            <div class="form-group">
-                                <label for="dockerfile-path">Dockerfile Path:</label>
-                                <input type="text" id="dockerfile-path" placeholder="Enter path to Dockerfile (e.g., D:/Projects/MyDocker/Dockerfile)" required />
-                            </div>
-                            <div class="form-group">
-                                <label for="docker-image-name">Image Name:</label>
-                                <input type="text" id="docker-image-name" placeholder="Enter image name (e.g., myapp)" required />
-                            </div>
-                            <div class="form-group">
-                                <label for="docker-image-tag">Tag (optional):</label>
-                                <input type="text" id="docker-image-tag" placeholder="Enter tag (default: latest)" />
-                            </div>
-                            <button type="submit" id="build-docker-btn" class="btn btn-success">Build Image</button>
-                        </form>
-                        <div id="docker-build-status" class="status"></div>
-                    </div>
-
-                    <div class="card">
-                        <h2>Docker Images</h2>
-                        <button id="refresh-images-btn" class="btn btn-primary">Refresh Images List</button>
-                        <div class="table-container">
-                            <table id="docker-images-table" class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Repository</th>
-                                        <th>Tag</th>
-                                        <th>ID</th>
-                                        <th>Size</th>
-                                        <th>Created</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <h2>Create Container</h2>
-                        <form id="create-container-form">
-                            <div class="form-group">
-                                <label for="container-image">Image:</label>
-                                <select id="container-image" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="container-name">Container Name (optional):</label>
-                                <input type="text" id="container-name" placeholder="Enter container name" />
-                            </div>
-                            <div class="form-group">
-                                <label for="container-ports">Ports (optional, e.g. 8080:80,443:443):</label>
-                                <input type="text" id="container-ports" placeholder="hostPort:containerPort" />
-                            </div>
-                            <div class="form-group">
-                                <label for="container-volumes">Volumes (optional, e.g. /host/path:/container/path):</label>
-                                <input type="text" id="container-volumes" placeholder="/host/path:/container/path" />
-                            </div>
-                            <div class="form-group">
-                                <label for="container-env">Environment Variables (optional, e.g. VAR1=value1,VAR2=value2):</label>
-                                <input type="text" id="container-env" placeholder="VAR1=value1,VAR2=value2" />
-                            </div>
-                            <div class="form-group">
-                                <label for="container-command">Command (optional):</label>
-                                <input type="text" id="container-command" placeholder="Override container default command" />
-                            </div>
-                            <button type="submit" id="create-container-btn" class="btn btn-success">Create & Run Container</button>
-                        </form>
-                        <div id="create-container-status" class="status"></div>
-                    </div>
-
-                    <div class="card">
-                        <h2>Running Containers</h2>
-                        <button id="refresh-containers-btn" class="btn btn-primary">Refresh Containers List</button>
-                        <div class="table-container">
-                            <table id="docker-containers-table" class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Container ID</th>
-                                        <th>Image</th>
-                                        <th>Name</th>
-                                        <th>Status</th>
-                                        <th>Ports</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <h2>Search Images</h2>
-                        <div class="form-group">
-                            <label for="image-search-type">Search in:</label>
-                            <select id="image-search-type">
-                                <option value="local">Local System</option>
-                                <option value="dockerhub">Docker Hub</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="image-search-term">Search term:</label>
-                            <input type="text" id="image-search-term" placeholder="Enter image name/tag" />
-                        </div>
-                        <button id="search-image-btn" class="btn btn-primary">Search</button>
-                        <div class="table-container">
-                            <table id="image-search-results-table" class="data-table">
-                                <thead id="image-search-results-header"></thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                        <div id="image-search-status" class="status"></div>
-                    </div>
-
-                    <div class="card">
-                        <h2>Pull Docker Image</h2>
-                        <form id="pull-image-form">
-                            <div class="form-group">
-                                <label for="pull-image-name">Image Name:</label>
-                                <input type="text" id="pull-image-name" placeholder="e.g. nginx, ubuntu" required />
-                            </div>
-                            <div class="form-group">
-                                <label for="pull-image-tag">Tag (optional):</label>
-                                <input type="text" id="pull-image-tag" placeholder="e.g. latest, 1.0" />
-                            </div>
-                            <button type="submit" id="pull-image-btn" class="btn btn-success">Pull Image</button>
-                        </form>
-                        <div id="pull-image-status" class="status"></div>
-                    </div>
+                <div class="form-group">
+                  <label for="disk-size">Disk Size (GB):</label>
+                  <input
+                    type="number"
+                    id="disk-size"
+                    min="1"
+                    max="1024"
+                    value="10"
+                    required
+                  />
                 </div>
+                <div class="form-group">
+                  <label for="disk-name">Disk Name:</label>
+                  <input
+                    type="text"
+                    id="disk-name"
+                    placeholder="Enter disk name"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  id="create-disk-btn"
+                  class="btn btn-success"
+                >
+                  Create Disk
+                </button>
+              </form>
             </div>
+
+            <div class="card">
+              <h2>Manage Existing Disks</h2>
+              <div class="form-group">
+                <select id="disk-list" size="5"></select>
+              </div>
+              <button id="delete-disk-btn" class="btn btn-danger">
+                Delete Selected Disk
+              </button>
+              <div id="disk-status" class="status"></div>
+            </div>
+          </div>
+
+          <!-- VM Creation Tab -->
+          <div id="vm-tab" class="tab-pane">
+            <div class="card">
+              <h2>VM Configuration</h2>
+              <form id="vm-form">
+                <div class="form-group">
+                  <label for="vm-name">VM Name:</label>
+                  <input
+                    type="text"
+                    id="vm-name"
+                    placeholder="Enter VM name"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="cpu-cores">CPU Cores:</label>
+                  <input
+                    type="number"
+                    id="cpu-cores"
+                    min="1"
+                    max="16"
+                    value="2"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="memory">Memory (MB):</label>
+                  <input
+                    type="number"
+                    id="memory"
+                    min="128"
+                    max="32768"
+                    value="1024"
+                    step="128"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="disk-select">Select Disk:</label>
+                  <select id="disk-select" required></select>
+                </div>
+                <div class="form-group">
+                  <label for="iso-path">Boot ISO (optional):</label>
+                  <div class="file-input-container">
+                    <input
+                      type="text"
+                      id="iso-path"
+                      placeholder="Select ISO file"
+                    />
+                    <input
+                      type="file"
+                      id="iso-file"
+                      accept=".iso"
+                      style="display: none"
+                    />
+                    <button
+                      type="button"
+                      id="browse-iso-btn"
+                      class="btn btn-primary"
+                    >
+                      Browse
+                    </button>
+                  </div>
+                </div>
+
+                <div class="button-group">
+                  <button
+                    type="button"
+                    id="save-vm-btn"
+                    class="btn btn-primary"
+                  >
+                    Save VM Config
+                  </button>
+                  <button
+                    type="button"
+                    id="load-vm-btn"
+                    class="btn btn-secondary"
+                  >
+                    Load VM Config
+                  </button>
+                </div>
+
+                <button
+                  type="submit"
+                  id="create-vm-btn"
+                  class="btn btn-success large"
+                >
+                  Create and Start VM
+                </button>
+              </form>
+              <div id="vm-status" class="status"></div>
+            </div>
+          </div>
+
+          <!-- VM Management Tab -->
+          <div id="manage-tab" class="tab-pane">
+            <div class="card">
+              <h2>Running Virtual Machines</h2>
+              <div class="form-group">
+                <select id="vm-list" size="5"></select>
+              </div>
+              <button id="refresh-vm-btn" class="btn btn-primary">
+                Refresh VM List
+              </button>
+              <div class="button-group">
+                <button id="stop-vm-btn" class="btn btn-danger">Stop VM</button>
+                <button id="view-details-btn" class="btn btn-primary">
+                  View Details
+                </button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2>Saved VM Configurations</h2>
+              <div class="form-group">
+                <select id="saved-vm-list" size="5"></select>
+              </div>
+              <div class="button-group">
+                <button id="start-saved-vm-btn" class="btn btn-success">
+                  Start Selected VM
+                </button>
+                <button id="edit-config-btn" class="btn btn-primary">
+                  Edit Config
+                </button>
+                <button id="delete-config-btn" class="btn btn-danger">
+                  Delete Config
+                </button>
+              </div>
+              <div id="manage-status" class="status"></div>
+            </div>
+          </div>
+          <!-- Docker Tab -->
+          <div id="docker-tab" class="tab-pane">
+            <div class="card">
+              <h2>Create Dockerfile</h2>
+              <form id="create-dockerfile-form">
+                <div class="form-group">
+                  <label for="dockerfile-save-path">Dockerfile Path:</label>
+                  <input
+                    type="text"
+                    id="dockerfile-save-path"
+                    placeholder="Enter path to save Dockerfile (e.g., D:/Projects/MyDocker/Dockerfile)"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="dockerfile-content">Dockerfile Content:</label>
+                  <textarea
+                    id="dockerfile-content"
+                    placeholder="FROM nginx:latest&#10;COPY ./html /usr/share/nginx/html&#10;EXPOSE 80"
+                    rows="10"
+                    required
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  id="create-dockerfile-btn"
+                  class="btn btn-success"
+                >
+                  Create Dockerfile
+                </button>
+              </form>
+              <div id="create-dockerfile-status" class="status"></div>
+            </div>
+
+            <div class="card">
+              <h2>Build Docker Image</h2>
+              <form id="docker-build-form">
+                <div class="form-group">
+                  <label for="dockerfile-path">Dockerfile Path:</label>
+                  <input
+                    type="text"
+                    id="dockerfile-path"
+                    placeholder="Enter path to Dockerfile (e.g., D:/Projects/MyDocker/Dockerfile)"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="docker-image-name">Image Name:</label>
+                  <input
+                    type="text"
+                    id="docker-image-name"
+                    placeholder="Enter image name (e.g., myapp)"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="docker-image-tag">Tag (optional):</label>
+                  <input
+                    type="text"
+                    id="docker-image-tag"
+                    placeholder="Enter tag (default: latest)"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  id="build-docker-btn"
+                  class="btn btn-success"
+                >
+                  Build Image
+                </button>
+              </form>
+              <div id="docker-build-status" class="status"></div>
+            </div>
+
+            <div class="card">
+              <h2>Docker Images</h2>
+              <button id="refresh-images-btn" class="btn btn-primary">
+                Refresh Images List
+              </button>
+              <div class="table-container">
+                <table id="docker-images-table" class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Repository</th>
+                      <th>Tag</th>
+                      <th>ID</th>
+                      <th>Size</th>
+                      <th>Created</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2>Create Container</h2>
+              <form id="create-container-form">
+                <div class="form-group">
+                  <label for="container-image">Image:</label>
+                  <select id="container-image" required></select>
+                </div>
+                <div class="form-group">
+                  <label for="container-name">Container Name (optional):</label>
+                  <input
+                    type="text"
+                    id="container-name"
+                    placeholder="Enter container name"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="container-ports"
+                    >Ports (optional, e.g. 8080:80,443:443):</label
+                  >
+                  <input
+                    type="text"
+                    id="container-ports"
+                    placeholder="hostPort:containerPort"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="container-volumes"
+                    >Volumes (optional, e.g. /host/path:/container/path):</label
+                  >
+                  <input
+                    type="text"
+                    id="container-volumes"
+                    placeholder="/host/path:/container/path"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="container-env"
+                    >Environment Variables (optional, e.g.
+                    VAR1=value1,VAR2=value2):</label
+                  >
+                  <input
+                    type="text"
+                    id="container-env"
+                    placeholder="VAR1=value1,VAR2=value2"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="container-command">Command (optional):</label>
+                  <input
+                    type="text"
+                    id="container-command"
+                    placeholder="Override container default command"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  id="create-container-btn"
+                  class="btn btn-success"
+                >
+                  Create & Run Container
+                </button>
+              </form>
+              <div id="create-container-status" class="status"></div>
+            </div>
+
+            <div class="card">
+              <h2>Running Containers</h2>
+              <button id="refresh-containers-btn" class="btn btn-primary">
+                Refresh Containers List
+              </button>
+              <div class="table-container">
+                <table id="docker-containers-table" class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Container ID</th>
+                      <th>Image</th>
+                      <th>Name</th>
+                      <th>Status</th>
+                      <th>Ports</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2>Search Images</h2>
+              <div class="form-group">
+                <label for="image-search-type">Search in:</label>
+                <select id="image-search-type">
+                  <option value="local">Local System</option>
+                  <option value="dockerhub">Docker Hub</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="image-search-term">Search term:</label>
+                <input
+                  type="text"
+                  id="image-search-term"
+                  placeholder="Enter image name/tag"
+                />
+              </div>
+              <button id="search-image-btn" class="btn btn-primary">
+                Search
+              </button>
+              <div class="table-container">
+                <table id="image-search-results-table" class="data-table">
+                  <thead id="image-search-results-header"></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <div id="image-search-status" class="status"></div>
+            </div>
+
+            <div class="card">
+              <h2>Pull Docker Image</h2>
+              <form id="pull-image-form">
+                <div class="form-group">
+                  <label for="pull-image-name">Image Name:</label>
+                  <input
+                    type="text"
+                    id="pull-image-name"
+                    placeholder="e.g. nginx, ubuntu"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="pull-image-tag">Tag (optional):</label>
+                  <input
+                    type="text"
+                    id="pull-image-tag"
+                    placeholder="e.g. latest, 1.0"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  id="pull-image-btn"
+                  class="btn btn-success"
+                >
+                  Pull Image
+                </button>
+              </form>
+              <div id="pull-image-status" class="status"></div>
+            </div>
+          </div>
         </div>
-        
-        <footer>
-            <div class="status-bar">
-                <span id="global-status">Ready</span>
-            </div>
-        </footer>
+      </div>
+
+      <footer>
+        <div class="status-bar">
+          <span id="global-status">Ready</span>
+        </div>
+      </footer>
     </div>
-    
+
     <!-- Modal Dialog for VM Details -->
     <div id="vm-details-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>VM Details</h2>
-            <pre id="vm-details-content"></pre>
-        </div>
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>VM Details</h2>
+        <pre id="vm-details-content"></pre>
+      </div>
     </div>
 
     <!-- QEMU Installation Modal -->
     <div id="qemu-install-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>QEMU Installation Required</h2>
-            <div class="install-instructions">
-                <p>QEMU is not installed or not found in your system PATH. This application requires QEMU to create and run virtual machines.</p>
-                
-                <h3>Installation Instructions:</h3>
-                
-                <h4>Windows:</h4>
-                <ol>
-                    <li>Download QEMU from <a href="https://qemu.weilnetz.de/w64/" target="_blank">https://qemu.weilnetz.de/w64/</a></li>
-                    <li>Run the installer and follow the installation steps</li>
-                    <li>Make sure to check the option to add QEMU to your PATH during installation</li>
-                    <li>Restart this application after installation</li>
-                </ol>
-                
-                <h4>Linux:</h4>
-                <pre>sudo apt-get install qemu-kvm qemu-utils   # For Ubuntu/Debian
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>QEMU Installation Required</h2>
+        <div class="install-instructions">
+          <p>
+            QEMU is not installed or not found in your system PATH. This
+            application requires QEMU to create and run virtual machines.
+          </p>
+
+          <h3>Installation Instructions:</h3>
+
+          <h4>Windows:</h4>
+          <ol>
+            <li>
+              Download QEMU from
+              <a href="https://qemu.weilnetz.de/w64/" target="_blank"
+                >https://qemu.weilnetz.de/w64/</a
+              >
+            </li>
+            <li>Run the installer and follow the installation steps</li>
+            <li>
+              Make sure to check the option to add QEMU to your PATH during
+              installation
+            </li>
+            <li>Restart this application after installation</li>
+          </ol>
+
+          <h4>Linux:</h4>
+          <pre>
+sudo apt-get install qemu-kvm qemu-utils   # For Ubuntu/Debian
 sudo dnf install qemu-kvm qemu-img       # For Fedora
-sudo pacman -S qemu                      # For Arch Linux</pre>
-                
-                <h4>macOS:</h4>
-                <pre>brew install qemu   # Using Homebrew</pre>
-                
-                <p>After installation, restart this application.</p>
-            </div>
-            <button id="close-install-modal" class="btn btn-primary">OK</button>
+sudo pacman -S qemu                      # For Arch Linux</pre
+          >
+
+          <h4>macOS:</h4>
+          <pre>brew install qemu   # Using Homebrew</pre>
+
+          <p>After installation, restart this application.</p>
         </div>
-    </div>    <!-- Scripts -->
+        <button id="close-install-modal" class="btn btn-primary">OK</button>
+      </div>
+    </div>
+    <!-- Scripts -->
     <script src="components/disk-manager.js"></script>
     <script src="components/vm-creator.js"></script>
     <script src="components/vm-manager.js"></script>
     <script src="components/docker-manager.js"></script>
     <script src="scripts.js"></script>
-</body>
+  </body>
 </html>
