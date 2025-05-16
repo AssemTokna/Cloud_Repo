@@ -4,6 +4,7 @@ const fs = require("fs");
 const multer = require("multer");
 const diskController = require("./controllers/disk-controller");
 const vmController = require("./controllers/vm-controller");
+const dockerController = require("./controllers/docker-controller");
 const { execSync } = require("child_process");
 const { platform } = require("os");
 
@@ -96,6 +97,20 @@ app.post("/api/upload-iso", upload.single("isoFile"), (req, res) => {
   }
 });
 
+// Docker management
+app.post("/api/docker/dockerfile", (req, res) => dockerController.createDockerfile(req, res));
+app.post("/api/docker/build", (req, res) => dockerController.buildImage(req, res));
+app.get("/api/docker/images", (req, res) => dockerController.listImages(req, res));
+app.post("/api/docker/containers/create", (req, res) => dockerController.createContainer(req, res));
+app.get("/api/docker/containers", (req, res) => dockerController.listRunningContainers(req, res));
+app.post("/api/docker/containers/stop", (req, res) => dockerController.stopContainer(req, res));
+app.post("/api/docker/images/search", (req, res) => dockerController.searchLocalImage(req, res));
+app.post("/api/docker/dockerhub/search", (req, res) => {
+  console.log("DockerHub search requested for:", req.body.searchTerm);
+  dockerController.searchDockerHub(req, res);
+});
+app.post("/api/docker/images/pull", (req, res) => dockerController.pullImage(req, res));
+
 // Serve the main HTML file
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
@@ -161,11 +176,34 @@ function setupVMProcessWatcher() {
 
 // Start server
 if (process.env.NODE_ENV !== "test") {
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
     setupVMProcessWatcher(); // Start the VM process watcher
+  }).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`Port ${PORT} is already in use. Trying port ${PORT + 1}`);
+      
+      // Try the next port
+      const altPort = PORT + 1;
+      app.listen(altPort, () => {
+        console.log(`Server running on http://localhost:${altPort}`);
+        setupVMProcessWatcher();
+      });
+    } else {
+      console.error('Server error:', err);
+    }
   });
 }
+
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Global error handler caught:', err);
+  res.status(500).json({
+    success: false,
+    message: "Internal server error",
+    error: err.toString()
+  });
+});
 
 // Export the app for testing
 module.exports = app;

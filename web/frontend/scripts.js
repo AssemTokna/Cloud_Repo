@@ -2,8 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Tab switching functionality
     const tabItems = document.querySelectorAll('.tab-item');
     const tabPanes = document.querySelectorAll('.tab-pane');
-    
-    tabItems.forEach(tab => {
+      tabItems.forEach(tab => {
         tab.addEventListener('click', function() {
             // Remove active class from all tabs
             tabItems.forEach(item => item.classList.remove('active'));
@@ -13,6 +12,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const tabId = this.getAttribute('data-tab');
             this.classList.add('active');
             document.getElementById(tabId).classList.add('active');
+            
+            // Special handling for Docker tab
+            if (tabId === 'docker-tab') {
+                console.log('Docker tab activated');
+                // Refresh Docker data when tab is clicked
+                if (typeof loadDockerImages === 'function') {
+                    loadDockerImages();
+                }
+                if (typeof loadRunningContainers === 'function') {
+                    loadRunningContainers();
+                }
+            }
         });
     });
     
@@ -58,12 +69,11 @@ document.addEventListener('DOMContentLoaded', function() {
     window.handleFetchError = function(error) {
         console.error('Fetch error:', error);
         document.getElementById('global-status').textContent = 'Error: ' + error.message;
-    };
-    
-    // Initialize components
+    };    // Initialize components
     initializeDiskManager();
     initializeVMCreator();
     initializeVMManager();
+    initializeDockerManager();
     
     // Update status
     document.getElementById('global-status').textContent = 'Ready';

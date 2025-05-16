@@ -1,0 +1,148 @@
+<!-- Docker Tab Content -->
+<div id="docker-tab" class="tab-pane">
+    <div class="card">
+        <h2>Create Dockerfile</h2>
+        <form id="create-dockerfile-form">
+            <div class="form-group">
+                <label for="dockerfile-save-path">Dockerfile Path:</label>
+                <input type="text" id="dockerfile-save-path" placeholder="Enter path to save Dockerfile (e.g., D:/Projects/MyDocker/Dockerfile)" required />
+            </div>
+            <div class="form-group">
+                <label for="dockerfile-content">Dockerfile Content:</label>
+                <textarea id="dockerfile-content" placeholder="FROM nginx:latest&#10;COPY ./html /usr/share/nginx/html&#10;EXPOSE 80" rows="10" required></textarea>
+            </div>
+            <button type="submit" id="create-dockerfile-btn" class="btn btn-success">Create Dockerfile</button>
+        </form>
+        <div id="create-dockerfile-status" class="status"></div>
+    </div>
+
+    <div class="card">
+        <h2>Build Docker Image</h2>
+        <form id="docker-build-form">
+            <div class="form-group">
+                <label for="dockerfile-path">Dockerfile Path:</label>
+                <input type="text" id="dockerfile-path" placeholder="Enter path to Dockerfile (e.g., D:/Projects/MyDocker/Dockerfile)" required />
+            </div>
+            <div class="form-group">
+                <label for="docker-image-name">Image Name:</label>
+                <input type="text" id="docker-image-name" placeholder="Enter image name (e.g., myapp)" required />
+            </div>
+            <div class="form-group">
+                <label for="docker-image-tag">Tag (optional):</label>
+                <input type="text" id="docker-image-tag" placeholder="Enter tag (default: latest)" />
+            </div>
+            <button type="submit" id="build-docker-btn" class="btn btn-success">Build Image</button>
+        </form>
+        <div id="docker-build-status" class="status"></div>
+    </div>
+
+    <div class="card">
+        <h2>Docker Images</h2>
+        <button id="refresh-images-btn" class="btn btn-primary">Refresh Images List</button>
+        <div class="table-container">
+            <table id="docker-images-table" class="data-table">
+                <thead>
+                    <tr>
+                        <th>Repository</th>
+                        <th>Tag</th>
+                        <th>ID</th>
+                        <th>Size</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Create Container</h2>
+        <form id="create-container-form">
+            <div class="form-group">
+                <label for="container-image">Image:</label>
+                <select id="container-image" required></select>
+            </div>
+            <div class="form-group">
+                <label for="container-name">Container Name (optional):</label>
+                <input type="text" id="container-name" placeholder="Enter container name" />
+            </div>
+            <div class="form-group">
+                <label for="container-ports">Ports (optional, e.g. 8080:80,443:443):</label>
+                <input type="text" id="container-ports" placeholder="hostPort:containerPort" />
+            </div>
+            <div class="form-group">
+                <label for="container-volumes">Volumes (optional, e.g. /host/path:/container/path):</label>
+                <input type="text" id="container-volumes" placeholder="/host/path:/container/path" />
+            </div>
+            <div class="form-group">
+                <label for="container-env">Environment Variables (optional, e.g. VAR1=value1,VAR2=value2):</label>
+                <input type="text" id="container-env" placeholder="VAR1=value1,VAR2=value2" />
+            </div>
+            <div class="form-group">
+                <label for="container-command">Command (optional):</label>
+                <input type="text" id="container-command" placeholder="Override container default command" />
+            </div>
+            <button type="submit" id="create-container-btn" class="btn btn-success">Create & Run Container</button>
+        </form>
+        <div id="create-container-status" class="status"></div>
+    </div>
+
+    <div class="card">
+        <h2>Running Containers</h2>
+        <button id="refresh-containers-btn" class="btn btn-primary">Refresh Containers List</button>
+        <div class="table-container">
+            <table id="docker-containers-table" class="data-table">
+                <thead>
+                    <tr>
+                        <th>Container ID</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Ports</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Search Images</h2>
+        <div class="form-group">
+            <label for="image-search-type">Search in:</label>
+            <select id="image-search-type">
+                <option value="local">Local System</option>
+                <option value="dockerhub">Docker Hub</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="image-search-term">Search term:</label>
+            <input type="text" id="image-search-term" placeholder="Enter image name/tag" />
+        </div>
+        <button id="search-image-btn" class="btn btn-primary">Search</button>
+        <div class="table-container">
+            <table id="image-search-results-table" class="data-table">
+                <thead id="image-search-results-header"></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div id="image-search-status" class="status"></div>
+    </div>
+
+    <div class="card">
+        <h2>Pull Docker Image</h2>
+        <form id="pull-image-form">
+            <div class="form-group">
+                <label for="pull-image-name">Image Name:</label>
+                <input type="text" id="pull-image-name" placeholder="e.g. nginx, ubuntu" required />
+            </div>
+            <div class="form-group">
+                <label for="pull-image-tag">Tag (optional):</label>
+                <input type="text" id="pull-image-tag" placeholder="e.g. latest, 1.0" />
+            </div>
+            <button type="submit" id="pull-image-btn" class="btn btn-success">Pull Image</button>
+        </form>
+        <div id="pull-image-status" class="status"></div>
+    </div>
+</div>
