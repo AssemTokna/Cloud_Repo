@@ -45,12 +45,7 @@
                 </div>
                 <div class="form-group">
                   <label for="disk-name">Disk Name:</label>
-                  <input
-                    type="text"
-                    id="disk-name"
-                    placeholder="Enter disk name"
-                    required
-                  />
+                  <input type="text" id="disk-name" required />
                 </div>
                 <button
                   type="submit"
@@ -81,12 +76,7 @@
               <form id="vm-form">
                 <div class="form-group">
                   <label for="vm-name">VM Name:</label>
-                  <input
-                    type="text"
-                    id="vm-name"
-                    placeholder="Enter VM name"
-                    required
-                  />
+                  <input type="text" id="vm-name" required />
                 </div>
                 <div class="form-group">
                   <label for="cpu-cores">CPU Cores:</label>
@@ -116,11 +106,7 @@
                 <div class="form-group">
                   <label for="iso-path">Boot ISO (optional):</label>
                   <div class="file-input-container">
-                    <input
-                      type="text"
-                      id="iso-path"
-                      placeholder="Select ISO file"
-                    />
+                    <input type="text" id="iso-path" />
                     <input
                       type="file"
                       id="iso-file"
@@ -210,18 +196,12 @@
               <form id="create-dockerfile-form">
                 <div class="form-group">
                   <label for="dockerfile-save-path">Dockerfile Path:</label>
-                  <input
-                    type="text"
-                    id="dockerfile-save-path"
-                    placeholder="Enter path to save Dockerfile (e.g., D:/Projects/MyDocker/Dockerfile)"
-                    required
-                  />
+                  <input type="text" id="dockerfile-save-path" required />
                 </div>
                 <div class="form-group">
                   <label for="dockerfile-content">Dockerfile Content:</label>
                   <textarea
                     id="dockerfile-content"
-                    placeholder="FROM nginx:latest&#10;COPY ./html /usr/share/nginx/html&#10;EXPOSE 80"
                     rows="10"
                     required
                   ></textarea>
@@ -242,29 +222,15 @@
               <form id="docker-build-form">
                 <div class="form-group">
                   <label for="dockerfile-path">Dockerfile Path:</label>
-                  <input
-                    type="text"
-                    id="dockerfile-path"
-                    placeholder="Enter path to Dockerfile (e.g., D:/Projects/MyDocker/Dockerfile)"
-                    required
-                  />
+                  <input type="text" id="dockerfile-path" required />
                 </div>
                 <div class="form-group">
-                  <label for="docker-image-name">Image Name:</label>
-                  <input
-                    type="text"
-                    id="docker-image-name"
-                    placeholder="Enter image name (e.g., myapp)"
-                    required
-                  />
+                  <label for="docker-image-name">Repository Name:</label>
+                  <input type="text" id="docker-image-name" required />
                 </div>
                 <div class="form-group">
                   <label for="docker-image-tag">Tag (optional):</label>
-                  <input
-                    type="text"
-                    id="docker-image-tag"
-                    placeholder="Enter tag (default: latest)"
-                  />
+                  <input type="text" id="docker-image-tag" />
                 </div>
                 <button
                   type="submit"
@@ -307,50 +273,31 @@
                 </div>
                 <div class="form-group">
                   <label for="container-name">Container Name (optional):</label>
-                  <input
-                    type="text"
-                    id="container-name"
-                    placeholder="Enter container name"
-                  />
+                  <input type="text" id="container-name" />
                 </div>
                 <div class="form-group">
                   <label for="container-ports"
-                    >Ports (optional, e.g. 8080:80,443:443):</label
+                    >Ports (optional, e.g. 8080:80,443:443, 8080:80/tcp,
+                    443:443/tcp):</label
                   >
-                  <input
-                    type="text"
-                    id="container-ports"
-                    placeholder="hostPort:containerPort"
-                  />
+                  <input type="text" id="container-ports" />
                 </div>
                 <div class="form-group">
                   <label for="container-volumes"
                     >Volumes (optional, e.g. /host/path:/container/path):</label
                   >
-                  <input
-                    type="text"
-                    id="container-volumes"
-                    placeholder="/host/path:/container/path"
-                  />
+                  <input type="text" id="container-volumes" />
                 </div>
                 <div class="form-group">
                   <label for="container-env"
                     >Environment Variables (optional, e.g.
                     VAR1=value1,VAR2=value2):</label
                   >
-                  <input
-                    type="text"
-                    id="container-env"
-                    placeholder="VAR1=value1,VAR2=value2"
-                  />
+                  <input type="text" id="container-env" />
                 </div>
                 <div class="form-group">
                   <label for="container-command">Command (optional):</label>
-                  <input
-                    type="text"
-                    id="container-command"
-                    placeholder="Override container default command"
-                  />
+                  <input type="text" id="container-command" />
                 </div>
                 <button
                   type="submit"
@@ -396,11 +343,7 @@
               </div>
               <div class="form-group">
                 <label for="image-search-term">Search term:</label>
-                <input
-                  type="text"
-                  id="image-search-term"
-                  placeholder="Enter image name/tag"
-                />
+                <input type="text" id="image-search-term" />
               </div>
               <button id="search-image-btn" class="btn btn-primary">
                 Search
@@ -418,29 +361,59 @@
               <h2>Pull Docker Image</h2>
               <form id="pull-image-form">
                 <div class="form-group">
-                  <label for="pull-image-name">Image Name:</label>
-                  <input
-                    type="text"
-                    id="pull-image-name"
-                    placeholder="e.g. nginx, ubuntu"
-                    required
-                  />
+                  <label for="pull-image-type">Image Type:</label>
+                  <select id="pull-image-type">
+                    <option value="official">Official Docker Hub Image</option>
+                    <option value="unofficial">
+                      Unofficial Repository Image
+                    </option>
+                  </select>
+                </div>
+                <div id="unofficial-fields" style="display: none">
+                  <div class="form-group">
+                    <label for="pull-image-username">Username:</label>
+                    <input type="text" id="pull-image-username" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="pull-image-name">Repository Name:</label>
+                  <input type="text" id="pull-image-name" required />
                 </div>
                 <div class="form-group">
                   <label for="pull-image-tag">Tag (optional):</label>
-                  <input
-                    type="text"
-                    id="pull-image-tag"
-                    placeholder="e.g. latest, 1.0"
-                  />
+                  <input type="text" id="pull-image-tag" />
                 </div>
-                <button
-                  type="submit"
-                  id="pull-image-btn"
-                  class="btn btn-success"
+                <div class="button-group">
+                  <button
+                    type="submit"
+                    id="pull-image-btn"
+                    class="btn btn-success"
+                  >
+                    Pull Image
+                  </button>
+                  <button
+                    type="button"
+                    id="stop-pull-btn"
+                    class="btn btn-danger"
+                    style="display: none"
+                  >
+                    Stop Pull
+                  </button>
+                </div>
+                <div
+                  class="progress-container"
+                  style="display: none; margin-top: 10px"
                 >
-                  Pull Image
-                </button>
+                  <div class="progress">
+                    <div
+                      id="pull-progress-bar"
+                      class="progress-bar"
+                      role="progressbar"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                  <div id="pull-progress-text" class="progress-text">0%</div>
+                </div>
               </form>
               <div id="pull-image-status" class="status"></div>
             </div>

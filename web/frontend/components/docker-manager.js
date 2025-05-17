@@ -66,6 +66,8 @@ function initializeDockerManager() {
   const pullImageTag = document.getElementById("pull-image-tag");
   const pullImageBtn = document.getElementById("pull-image-btn");
   const pullImageStatus = document.getElementById("pull-image-status");
+  const pullImageType = document.getElementById("pull-image-type");
+
   // 1. Create Dockerfile
   if (createDockerfileForm) {
     console.log("Adding event listener to create-dockerfile-form");
@@ -539,23 +541,98 @@ function initializeDockerManager() {
           searchImageBtn.disabled = false;
         });
     });
-  } // 8. Pull Image
+  }
+  // 8. Pull Image
   if (pullImageForm) {
+    let pullAbortController = null;
+
+    // Handle image type change
+    const imageTypeSelect = document.getElementById("pull-image-type");
+    const unofficialFields = document.getElementById("unofficial-fields");
+    const imageNameInput = document.getElementById("pull-image-name");
+
+    imageTypeSelect.addEventListener("change", function () {
+      if (this.value === "unofficial") {
+        unofficialFields.style.display = "block";
+        imageNameInput.placeholder = "For unofficial: myapp";
+      } else {
+        unofficialFields.style.display = "none";
+        imageNameInput.placeholder = "For official: nginx, ubuntu";
+      }
+    });
+
+    // Handle stop pull button
+    const stopPullBtn = document.getElementById("stop-pull-btn");
+    stopPullBtn.addEventListener("click", function () {
+      if (pullAbortController) {
+        pullAbortController.abort();
+        pullImageStatus.textContent = "Pull operation cancelled";
+        resetPullUI();
+      }
+    });
+
+    function resetPullUI() {
+      pullImageBtn.disabled = false;
+      stopPullBtn.style.display = "none";
+      document.querySelector(".progress-container").style.display = "none";
+      document.getElementById("pull-progress-bar").style.width = "0%";
+      document.getElementById("pull-progress-text").textContent = "0%";
+      pullAbortController = null;
+    }
+
+    function updateProgress(progress) {
+      const progressBar = document.getElementById("pull-progress-bar");
+      const progressText = document.getElementById("pull-progress-text");
+      progressBar.style.width = `${progress}%`;
+      progressText.textContent = `${progress}%`;
+    }
+
     pullImageForm.addEventListener("submit", function (e) {
       e.preventDefault();
 
       const name = pullImageName.value.trim();
       const tag = pullImageTag.value.trim();
+      const imageType = imageTypeSelect.value;
+      const isOfficial = imageType === "official";
+      const username = document
+        .getElementById("pull-image-username")
+        .value.trim();
 
       if (!name) {
         pullImageStatus.textContent = "Please enter an image name";
         return;
       }
 
+      // Validate unofficial image format
+      if (!isOfficial) {
+        if (!username) {
+          pullImageStatus.textContent =
+            "Please enter a username for unofficial repository";
+          return;
+        }
+      }
+
+      // Reset UI and create new AbortController
+      resetPullUI();
+      pullAbortController = new AbortController();
+
+      // Show progress UI
+      document.querySelector(".progress-container").style.display = "block";
+      stopPullBtn.style.display = "inline-block";
+      pullImageBtn.disabled = true;
       pullImageStatus.textContent = `Pulling image ${name}${
         tag ? ":" + tag : ""
       }...`;
-      pullImageBtn.disabled = true;
+
+      // Start progress polling
+      let progress = 0;
+      const progressInterval = setInterval(() => {
+        if (progress < 90) {
+          // Cap at 90% until complete
+          progress += Math.random() * 5;
+          updateProgress(Math.min(90, Math.round(progress)));
+        }
+      }, 1000);
 
       fetch("/api/docker/images/pull", {
         method: "POST",
@@ -565,11 +642,16 @@ function initializeDockerManager() {
         body: JSON.stringify({
           imageName: name,
           tag: tag,
+          isOfficial: isOfficial,
+          username: username,
         }),
+        signal: pullAbortController.signal,
       })
         .then((response) => response.json())
         .then((data) => {
+          clearInterval(progressInterval);
           if (data.success) {
+            updateProgress(100);
             pullImageStatus.textContent = data.message;
             // Refresh images list
             loadDockerImages();
@@ -579,11 +661,18 @@ function initializeDockerManager() {
           }
         })
         .catch((error) => {
-          pullImageStatus.textContent = `Error: ${error.message}`;
-          console.error("Error pulling image:", error);
+          clearInterval(progressInterval);
+          if (error.name === "AbortError") {
+            pullImageStatus.textContent = "Pull operation cancelled";
+          } else {
+            pullImageStatus.textContent = `Error: ${error.message}`;
+            console.error("Error pulling image:", error);
+          }
         })
         .finally(() => {
-          pullImageBtn.disabled = false;
+          setTimeout(() => {
+            resetPullUI();
+          }, 2000); // Keep progress visible for 2 seconds after completion
         });
     });
   }

@@ -104,14 +104,14 @@ const dockerController = {
         .split("\n")
         .filter(Boolean)
         .map((line) => {
-          const [repoTag, id, size, created] = line.split(" ");
+          const [repoTag, id, size, one, two, three] = line.split(" ");
           const [repo, tag] = repoTag.split(":");
           return {
             repository: repo,
             tag: tag || "latest",
             id,
             size,
-            created,
+            created: `${one} ${two} ${three}`,
           };
         });
 
@@ -518,11 +518,11 @@ const dockerController = {
   },
 
   /**
-   * Pull a Docker image from DockerHub
+   * Pull a Docker image from DockerHub or unofficial repositories
    */
   pullImage: (req, res) => {
     try {
-      const { imageName, tag } = req.body;
+      const { imageName, tag, isOfficial = true, username } = req.body;
 
       if (!imageName) {
         return res.status(400).json({
@@ -532,7 +532,21 @@ const dockerController = {
       }
 
       const imageTag = tag || "latest";
-      const fullImageName = `${imageName}:${imageTag}`;
+      let fullImageName;
+
+      if (isOfficial) {
+        // For official Docker Hub images
+        fullImageName = `${imageName}:${imageTag}`;
+      } else {
+        // For unofficial repositories, ensure username is provided
+        if (!username) {
+          return res.status(400).json({
+            success: false,
+            message: "Username is required for unofficial repositories",
+          });
+        }
+        fullImageName = `${username}/${imageName}:${imageTag}`;
+      }
 
       // Pull the image
       const output = execSync(`docker pull ${fullImageName}`).toString();
